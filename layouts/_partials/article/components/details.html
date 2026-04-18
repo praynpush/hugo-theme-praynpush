@@ -27,6 +27,18 @@
         </h3>
         {{ end }}
     </div>
+    
+    {{ if not $IsList }}
+        {{ $audio := $Page.Resources.GetMatch "audio.mp3" }}
+        {{ if $audio }}
+        <div class="article-audio">
+            <audio controls preload="none" style="width: 100%; height: 40px; margin-top: 10px; border-radius: var(--card-border-radius); filter: opacity(0.8);">
+                <source src="{{ $audio.RelPermalink }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+        {{ end }}
+    {{ end }}
 
     {{ $showReadingTime := $Page.Params.readingTime | default ($Page.Site.Params.article.readingTime) }}
     {{ $showDate := not $Page.Date.IsZero }}
