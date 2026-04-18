@@ -26,8 +26,6 @@
 {{- $favicon := partial "helper/image" (dict "Image" .Site.Params.favicon "Resources" resources "Context" .) -}}
 {{ with $favicon }}
     <link rel="shortcut icon" href="{{ .Permalink }}" />
-    <link rel="icon" type="image/png" href="{{ .Permalink }}" />
-    <link rel="apple-touch-icon" href="{{ .Permalink }}" />
 {{ end }}
 
 {{- if .Site.Params.cookies.enabled -}}
