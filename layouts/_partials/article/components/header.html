@@ -5,23 +5,40 @@
     {{- $youtubeId := $Page.Params.youtube -}}
     {{ if $image }}
         {{ if and $youtubeId (not $IsList) }}
-        <div class="article-image" style="position: relative; cursor: pointer; display: block;"
-             onclick="this.innerHTML='<div style=\'position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: var(--card-border-radius);\'><iframe style=\'position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;\' src=\'https://www.youtube.com/embed/{{ $youtubeId }}?autoplay=1\' frameborder=\'0\' allow=\'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\' allowfullscreen></iframe></div>'">
-            {{ partial "helper/responsive-image" (dict
-                "Resource" $image.Resource
-                "Widths" (cond $Page.Site.Params.ImageProcessing.Content.Enabled $Page.Site.Params.ImageProcessing.Content.Widths nil)
-                "Attributes" (dict
-                    "src" $image.Permalink
-                    "width" $image.Width
-                    "height" $image.Height
-                    "alt" (printf "Featured image of post %s" $Page.Title)
-                    "loading" "lazy"
-                    "style" "width:100%; height:100%; object-fit:cover;"
-                    "sizes" "(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px"
-                )
-            ) }}
-            <div class="youtube-play-btn" style="position:absolute; width: 68px; height: 48px; background: rgba(33,33,33,0.8); border-radius: 14px; display: flex; align-items: center; justify-content: center; transition: background 0.2s ease; z-index: 2;" onmouseover="this.style.background='red'" onmouseout="this.style.background='rgba(33,33,33,0.8)'">
+        <div class="article-image youtube-container" style="position: relative; cursor: pointer; display: block;"
+             onclick="
+                this.querySelector('.image-wrapper').style.display = 'none';
+                this.querySelector('.youtube-play-btn').style.display = 'none';
+                var iframe = this.querySelector('iframe');
+                iframe.src = iframe.dataset.src;
+                this.querySelector('.iframe-wrapper').style.display = 'block';
+             ">
+            
+            <!-- Image Wrapper -->
+            <div class="image-wrapper" style="width: 100%; height: 100%;">
+                {{ partial "helper/responsive-image" (dict
+                    "Resource" $image.Resource
+                    "Widths" (cond $Page.Site.Params.ImageProcessing.Content.Enabled $Page.Site.Params.ImageProcessing.Content.Widths nil)
+                    "Attributes" (dict
+                        "src" $image.Permalink
+                        "width" $image.Width
+                        "height" $image.Height
+                        "alt" (printf "Featured image of post %s" $Page.Title)
+                        "loading" "lazy"
+                        "style" "width:100%; height:100%; object-fit:cover;"
+                        "sizes" "(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px"
+                    )
+                ) }}
+            </div>
+
+            <!-- Play Button Overlay -->
+            <div class="youtube-play-btn" style="position:absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 68px; height: 48px; background: rgba(33,33,33,0.8); border-radius: 14px; display: flex; align-items: center; justify-content: center; transition: background 0.2s ease; z-index: 2;" onmouseover="this.style.background='red'" onmouseout="this.style.background='rgba(33,33,33,0.8)'">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="white" style="margin-left: 4px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+
+            <!-- Hidden iFrame Wrapper -->
+            <div class="iframe-wrapper" style="display: none; position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: var(--card-border-radius);">
+                <iframe data-src="https://www.youtube.com/embed/{{ $youtubeId }}?autoplay=1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </div>
         {{ else }}
