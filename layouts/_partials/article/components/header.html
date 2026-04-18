@@ -2,9 +2,11 @@
 {{- $Page := .Page -}}
 <header class="article-header">
     {{- $image := partial "helper/image" (dict "Image" $Page.Params.image "Resources" $Page.Resources "Context" $Page) -}}
+    {{- $youtubeId := $Page.Params.youtube -}}
     {{ if $image }}
-    <div class="article-image">
-        <a href="{{ $Page.RelPermalink }}">
+        {{ if and $youtubeId (not $IsList) }}
+        <div class="article-image" style="position: relative; cursor: pointer; display: flex; justify-content: center; align-items: center;"
+             onclick="this.innerHTML='<iframe width=\'100%\' height=\'100%\' src=\'https://www.youtube.com/embed/{{ $youtubeId }}?autoplay=1\' frameborder=\'0\' allow=\'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\' allowfullscreen style=\'position:absolute; top:0; left:0; width:100%; height:100%; border:0; border-radius: var(--card-border-radius); z-index:10;\'></iframe>'">
             {{ partial "helper/responsive-image" (dict
                 "Resource" $image.Resource
                 "Widths" (cond $Page.Site.Params.ImageProcessing.Content.Enabled $Page.Site.Params.ImageProcessing.Content.Widths nil)
@@ -14,11 +16,32 @@
                     "height" $image.Height
                     "alt" (printf "Featured image of post %s" $Page.Title)
                     "loading" "lazy"
+                    "style" "width:100%; height:100%; object-fit:cover;"
                     "sizes" "(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px"
                 )
             ) }}
-        </a>
-    </div>
+            <div class="youtube-play-btn" style="position:absolute; width: 68px; height: 48px; background: rgba(33,33,33,0.8); border-radius: 14px; display: flex; align-items: center; justify-content: center; transition: background 0.2s ease; z-index: 2;" onmouseover="this.style.background='red'" onmouseout="this.style.background='rgba(33,33,33,0.8)'">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="white" style="margin-left: 4px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+        </div>
+        {{ else }}
+        <div class="article-image">
+            <a href="{{ $Page.RelPermalink }}">
+                {{ partial "helper/responsive-image" (dict
+                    "Resource" $image.Resource
+                    "Widths" (cond $Page.Site.Params.ImageProcessing.Content.Enabled $Page.Site.Params.ImageProcessing.Content.Widths nil)
+                    "Attributes" (dict
+                        "src" $image.Permalink
+                        "width" $image.Width
+                        "height" $image.Height
+                        "alt" (printf "Featured image of post %s" $Page.Title)
+                        "loading" "lazy"
+                        "sizes" "(max-width: 767px) calc(100vw - 30px), (max-width: 1023px) 700px, (max-width: 1279px) 950px, 1232px"
+                    )
+                ) }}
+            </a>
+        </div>
+        {{ end }}
     {{ end }}
 
     {{ partial "article/components/details" (dict "Page" $Page "IsList" $IsList) }}
