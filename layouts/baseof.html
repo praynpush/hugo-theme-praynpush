@@ -5,6 +5,16 @@
         {{- block "head" . -}}{{ end }}
     </head>
     <body class="{{ block `body-class` . }}{{ end }}">
+        {{/* WeChat sharing hack */}}
+        <div style="display:none;">
+            {{ $image := partial "helper/image" (dict "Image" .Params.image "Resources" .Resources "Context" .) }}
+            {{ if not $image.Permalink }}
+                {{ $image = partial "helper/image" (dict "Image" .Site.Params.opengraph.defaultImage "Resources" .Resources "Context" .) }}
+            {{ end }}
+            {{ if $image.Permalink }}
+                <img src="{{ absURL $image.Permalink }}" alt="Featured Image" />
+            {{ end }}
+        </div>
         {{- partial "head/colorScheme" . -}}
 
         {{/* The container is wider when there's any activated widget */}}

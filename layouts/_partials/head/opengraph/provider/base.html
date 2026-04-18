@@ -38,6 +38,13 @@
 {{- end -}}
 
 {{ $image := partial "helper/image" (dict "Image" .Params.image "Resources" .Resources "Context" .) }}
-{{- if $image -}}
+{{- if not $image.Permalink -}}
+    {{/* Fallback to global default image */}}
+    {{ $image = partial "helper/image" (dict "Image" .Site.Params.opengraph.defaultImage "Resources" .Resources "Context" .) }}
+{{- end -}}
+
+{{- if $image.Permalink -}}
     <meta property='og:image' content='{{ absURL $image.Permalink }}' />
+    {{- with $image.Width -}}<meta property='og:image:width' content='{{ . }}' />{{- end -}}
+    {{- with $image.Height -}}<meta property='og:image:height' content='{{ . }}' />{{- end -}}
 {{- end -}}

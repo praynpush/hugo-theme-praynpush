@@ -10,7 +10,12 @@
 <meta name="twitter:description" {{ printf "content=%q" $description | safeHTMLAttr }}>
 
 {{- $image := partial "helper/image" (dict "Image" .Params.image "Resources" .Resources "Context" .) -}}
-{{- if $image -}}
-    <meta name="twitter:card" content="{{ .Site.Params.opengraph.twitter.card }}">
+{{- if not $image.Permalink -}}
+    {{/* Fallback to global default image */}}
+    {{ $image = partial "helper/image" (dict "Image" .Site.Params.opengraph.defaultImage "Resources" .Resources "Context" .) }}
+{{- end -}}
+
+{{- if $image.Permalink -}}
+    <meta name="twitter:card" content="{{ .Site.Params.opengraph.twitter.card | default "summary_large_image" }}">
     <meta name="twitter:image" content='{{ absURL $image.Permalink }}' />
 {{- end -}}
